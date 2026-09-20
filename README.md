@@ -100,13 +100,13 @@ Auth (set in `.env` or the environment):
 | `MEALIE_TIMEOUT` | Per-request timeout, seconds (default 60) |
 | `MEALIE_VERIFY_SSL` | Verify TLS cert; `false` to accept self-signed (default true) |
 | `MCP_SERVER_NAME` | MCP name advertised to clients (default `Mealie`) |
-| `MCP_AUTH_MODE` | HTTP endpoint auth: `none` *(default)* \| `key` \| `authentik` \| `both` (= Authentik token or API key). No effect in stdio mode |
+| `MCP_AUTH_MODE` | HTTP endpoint auth: `none` *(default)* \| `key` \| `oidc` \| `both` (= OIDC token or API key). No effect in stdio mode |
 | `MCP_AUTH_TOKEN` | API key for `key`/`both`: reject every request to `/mcp` without `Authorization: Bearer <token>` |
-| `MCP_PUBLIC_BASE_URL` | Public HTTPS URL (clients' view) needed by `authentik`/`both` for discovery metadata |
-| `MCP_AUTH_ISSUER` | Authentik OIDC issuer URL (required for `authentik`/`both`), e.g. `https://auth.example/application/o/mealie/` |
-| `MCP_AUTH_AUDIENCE` | Authentik token `aud` to require (optional, typically the provider's client id) |
-| `MCP_AUTH_SCOPES` | Authentik scopes a token must carry (optional, comma-separated) |
-| `MCP_AUTH_DISCOVERY_URL` | Override Authentik's OIDC discovery document URL (optional) |
+| `MCP_PUBLIC_BASE_URL` | Public HTTPS URL (clients' view) needed by `oidc`/`both` for discovery metadata |
+| `MCP_AUTH_ISSUER` | OIDC issuer URL of your identity provider (Authentik, Keycloak, …; required for `oidc`/`both`), e.g. `https://auth.example/application/o/mealie/` |
+| `MCP_AUTH_AUDIENCE` | Token `aud` to require (optional, typically the provider's client id) |
+| `MCP_AUTH_SCOPES` | Scopes a token must carry (optional, comma-separated) |
+| `MCP_AUTH_DISCOVERY_URL` | Override the OIDC discovery document URL (optional) |
 | `MEALIE_INCLUDE_TAGS` | Expose **only** these API groups, comma-separated (e.g. `recipes,organizers,foods`). Fewer tools = leaner context / fits clients that cap tool counts |
 | `MEALIE_EXCLUDE_TAGS` | Expose everything **except** these groups (e.g. `admin,households`) |
 | `MEALIE_SLIM_SCHEMAS` | Trim redundant schema noise — default `true` (see modes below) |
@@ -163,37 +163,35 @@ stdio):
   `/mcp` (401 without it). Clients send the token in headers config — e.g.
   Claude/Cursor `"headers": {"Authorization": "Bearer <token>"}` — or, in the
   FastMCP Python client, `Client("http://host:8000/mcp", auth="<token>")`.
-- `authentik` — validate access tokens issued by **your** Authentik server
-  (OIDC + JWKS), so only your Authentik users can call `/mcp`. Usually the best
-  fit when an Authentik instance is already in front of Mealie.
-- `both` — accept an Authentik token **or** the pre-shared API key: Authentik
-  for interactive clients, the key for scripts/services.
+- `oidc` — validate access tokens issued by **your** OIDC / OAuth 2.0 identity
+  provider (Authentik, Keycloak, …; OIDC + JWKS), so only that provider's
+  users can call `/mcp`. Usually the best fit when Authentik is already in
+  front of Mealie.
+- `both` — accept an OIDC token **or** the pre-shared API key: the identity
+  provider for interactive clients, the key for scripts/services.
 
-`authentik` / `both` require `MCP_PUBLIC_BASE_URL` (public HTTPS URL the client
+`oidc` / `both` require `MCP_PUBLIC_BASE_URL` (public HTTPS URL the client
 reaches you on) so discovery metadata resolves and `MCP_AUTH_ISSUER`;
 `key` / `both` require `MCP_AUTH_TOKEN` — setting just the token does nothing
 unless the mode asks for it. All modes work behind a reverse proxy (set
 `MCP_HOST=0.0.0.0`, proxy terminates TLS).
 
-### Authentik mode (`authentik`)
+### OIDC mode (`oidc`)
 
 Spec-aware clients (ChatGPT/Claude connectors) discover your identity provider
-automatically — no built-in server needed. Set `MCP_AUTH_MODE=authentik`,
-`MCP_PUBLIC_BASE_URL`, and `MCP_AUTH_ISSUER` (the OIDC issuer of the Authentik
-OAuth2/OIDC provider for your app, e.g.
-`https://auth.example/application/o/mealie/`). Optionally pin the expected
-token `MCP_AUTH_AUDIENCE` (usually the provider's client id) and required
-`MCP_AUTH_SCOPES`.
+automatically — no built-in server needed. Set `MCP_AUTH_MODE=oidc`,
+`MCP_PUBLIC_BASE_URL`, and `MCP_AUTH_ISSUER` (the OIDC issuer of your provider,
+e.g. for Authentik `https://auth.example/application/o/mealie/`). Optionally
+pin the expected token `MCP_AUTH_AUDIENCE` (usually the provider's client id)
+and required `MCP_AUTH_SCOPES`.
 
 The server then validates the RS256 signature, expiry, issuer, audience and
-scopes of every bearer token against Authentik's JWKS (fetched from
+scopes of every bearer token against the provider's JWKS (fetched from
 `MCP_AUTH_ISSUER/.well-known/openid-configuration`; override with
 `MCP_AUTH_DISCOVERY_URL`), and advertises RFC 9728 protected-resource metadata
-at `/.well-known/oauth-protected-resource` so spec-aware clients discover
-Authentik automatically. Sign up a new OAuth2/OIDC provider:
-Authentik → Applications → you app → Provide → OIDC, note its client id/secret,
-and configure that application in your AI tool's connector settings instead of
-this server.
+at `/.well-known/oauth-protected-resource` so spec-aware clients discover the
+provider automatically. A click-by-click Authentik walkthrough lives in
+[`docs/authentik-setup.md`](./docs/authentik-setup.md).
 
 > **Tip:** if the access token your AI tool receives does not include the
 > client id in `aud`, omit `MCP_AUTH_AUDIENCE` (issuer + signature are usually

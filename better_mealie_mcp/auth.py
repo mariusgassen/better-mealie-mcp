@@ -4,18 +4,18 @@ Turns FastMCP's ``auth=`` hook into a small resource server so that, when the
 server runs over HTTP, every request to /mcp must authenticate. The
 mechanisms are:
 
-- ``key``       — a single pre-shared API key sent as ``Authorization: Bearer <key>``
-- ``authentik`` — validate tokens issued by an external Authentik (OIDC)
-  authorization server, so /mcp accepts only tokens Authentik actually issued
-  to your users. Full RFC 9728 protected-resource metadata routes, no
-  auto-approval.
-- ``both``      — accept an Authentik OIDC token *or* the pre-shared API key
-  (per-user logins for interactive clients, the key for scripts/services)
+- ``key``    — a single pre-shared API key sent as ``Authorization: Bearer <key>``
+- ``oidc``   — validate tokens issued by an external OIDC / OAuth 2.0
+  authorization server (Authentik, Keycloak, Entra ID, Google, …), so /mcp
+  accepts only tokens that server actually issued to your users. Full
+  RFC 9728 protected-resource metadata routes, no auto-approval.
+- ``both``   — accept an OIDC token *or* the pre-shared API key (per-user
+  logins for interactive clients, the key for scripts/services)
 
 The built-in OAuth 2.1 server is intentionally gone: FastMCP's in-memory
 provider auto-approves every authorization request, so it imposed no access
 control. Spec-aware clients reach a real identity provider via the RFC 9728
-metadata routes ("authentik").
+metadata routes ("oidc").
 """
 
 from __future__ import annotations
@@ -60,18 +60,18 @@ class BearerTokenAuth(AuthProvider):
         )
 
 
-class AuthentikTokenVerifier(TokenVerifier):
-    """Validate access tokens issued by an Authentik (OIDC) server.
+class OIDCTokenVerifier(TokenVerifier):
+    """Validate access tokens issued by an external OIDC / OAuth 2.0 server.
 
-    Fetches Authentik's OIDC discovery document to locate its JWKS, then
+    Fetches the issuer's OIDC discovery document to locate its JWKS, then
     validates the signature (RS256) plus ``exp`` / ``iss`` / ``aud`` / scopes
-    of every access token — the server accepts **only** tokens Authentik
-    actually issued, so access is tied to your Authentik users, not anyone who
-    can reach the endpoint.
+    of every access token — the server accepts **only** tokens the issuer
+    actually issued, so access is tied to that identity provider's users, not
+    anyone who can reach the endpoint.
 
     Keys are cached with a short TTL and refreshed automatically on an unknown
     ``kid`` (key rotation). No network I/O happens until the first request is
-    verified, so the server starts even while Authentik is briefly unreachable
+    verified, so the server starts even while the issuer is briefly unreachable
     — requests just get 401 until the issuer can be contacted.
     """
 
@@ -100,7 +100,7 @@ class AuthentikTokenVerifier(TokenVerifier):
         try:
             return await self._verify(token)
         except Exception:
-            # A dangling Authentik failure must never crash the request handler.
+            # A dangling issuer failure must never crash the request handler.
             return None
 
     async def _verify(self, token: str) -> AccessToken | None:
@@ -171,12 +171,12 @@ class AuthentikTokenVerifier(TokenVerifier):
         self._fetched_at = time.monotonic()
 
 
-def _authentik_provider(public_url: str) -> AuthProvider:
-    """Build an Authentik-backed resource server (RFC 9728).
+def _oidc_provider(public_url: str) -> AuthProvider:
+    """Build an OIDC-backed resource server (RFC 9728).
 
-    The server validates tokens issued by an external Authentik OIDC provider
+    The server validates tokens issued by an external OIDC / OAuth 2.0 issuer
     and advertises protected-resource metadata pointing at it, so spec-aware
-    MCP clients discover Authentik from ``/.well-known/oauth-protected-resource``
+    MCP clients discover the issuer from ``/.well-known/oauth-protected-resource``
     and run the real login there — no auto-approval.
 
     Env: ``MCP_AUTH_ISSUER`` (required), ``MCP_AUTH_AUDIENCE`` and
@@ -184,14 +184,14 @@ def _authentik_provider(public_url: str) -> AuthProvider:
     """
     issuer = os.environ.get("MCP_AUTH_ISSUER")
     if not issuer:
-        raise SystemExit("MCP_AUTH_MODE='authentik' requires MCP_AUTH_ISSUER.")
+        raise SystemExit("MCP_AUTH_MODE='oidc' requires MCP_AUTH_ISSUER.")
     scopes = [
         s.strip()
         for s in os.environ.get("MCP_AUTH_SCOPES", "").split(",")
         if s.strip()
     ]
     return RemoteAuthProvider(
-        token_verifier=AuthentikTokenVerifier(
+        token_verifier=OIDCTokenVerifier(
             issuer=issuer,
             discovery_url=os.environ.get("MCP_AUTH_DISCOVERY_URL") or None,
             audience=os.environ.get("MCP_AUTH_AUDIENCE") or None,
@@ -207,15 +207,15 @@ def build_auth() -> AuthProvider | None:
 
     ``MCP_AUTH_MODE`` selects the mechanism (default ``none``):
 
-    - ``none``      — no auth; open endpoint for trusted/local setups
-    - ``key``       — require ``MCP_AUTH_TOKEN`` as ``Authorization: Bearer <token>``
-    - ``authentik`` — validate OIDC access tokens issued by an external
-      Authentik server (per-user access; no auto-approval)
-    - ``both``      — accept an Authentik OIDC token *or* ``MCP_AUTH_TOKEN``
+    - ``none``  — no auth; open endpoint for trusted/local setups
+    - ``key``   — require ``MCP_AUTH_TOKEN`` as ``Authorization: Bearer <token>``
+    - ``oidc``  — validate OIDC access tokens issued by an external OIDC /
+      OAuth 2.0 server (per-user access; no auto-approval)
+    - ``both``  — accept an OIDC token *or* ``MCP_AUTH_TOKEN``
 
-    ``authentik`` / ``both`` need ``MCP_PUBLIC_BASE_URL`` so discovery
-    metadata resolves correctly, and ``MCP_AUTH_ISSUER``; ``key`` / ``both``
-    need ``MCP_AUTH_TOKEN``.
+    ``oidc`` / ``both`` need ``MCP_PUBLIC_BASE_URL`` so discovery metadata
+    resolves correctly, and ``MCP_AUTH_ISSUER``; ``key`` / ``both`` need
+    ``MCP_AUTH_TOKEN``.
     """
     mode = os.environ.get("MCP_AUTH_MODE", "none").strip().lower()
     token = os.environ.get("MCP_AUTH_TOKEN")
@@ -225,16 +225,16 @@ def build_auth() -> AuthProvider | None:
         return None
     if mode == "key":
         return BearerTokenAuth(token) if token else None
-    if mode in ("authentik", "both"):
+    if mode in ("oidc", "both"):
         if not public_url:
             raise SystemExit(f"MCP_AUTH_MODE={mode!r} requires MCP_PUBLIC_BASE_URL.")
-        server = _authentik_provider(public_url)
-        if mode == "authentik":
+        server = _oidc_provider(public_url)
+        if mode == "oidc":
             return server
         if not token:
             raise SystemExit("MCP_AUTH_MODE='both' requires MCP_AUTH_TOKEN.")
-        # The Authentik verifier still enforces scopes on real tokens; the API
-        # key is exempt from the scope gate, so the outer middleware gets none.
+        # The OIDC verifier still enforces scopes on real tokens; the API key
+        # is exempt from the scope gate, so the outer middleware gets none.
         return MultiAuth(
             server=server,
             verifiers=[BearerTokenAuth(token)],
@@ -242,5 +242,5 @@ def build_auth() -> AuthProvider | None:
         )
     raise SystemExit(
         f"Invalid MCP_AUTH_MODE={mode!r}. "
-        "Use 'none', 'key', 'both' or 'authentik'."
+        "Use 'none', 'key', 'both' or 'oidc'."
     )
