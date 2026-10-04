@@ -100,6 +100,7 @@ Auth (set in `.env` or the environment):
 | `MEALIE_TIMEOUT` | Per-request timeout, seconds (default 60) |
 | `MEALIE_VERIFY_SSL` | Verify TLS cert; `false` to accept self-signed (default true) |
 | `MCP_SERVER_NAME` | MCP name advertised to clients (default `Mealie`) |
+| `MCP_HEALTH_TIMEOUT` | Timeout for the Mealie probe behind `GET /health`, seconds (default 5) |
 | `MCP_AUTH_MODE` | HTTP endpoint auth: `none` *(default)* \| `key` \| `authentik` \| `both` (= Authentik token or API key). No effect in stdio mode |
 | `MCP_AUTH_TOKEN` | API key for `key`/`both`: reject every request to `/mcp` without `Authorization: Bearer <token>` |
 | `MCP_PUBLIC_BASE_URL` | Public HTTPS URL (clients' view) needed by `authentik`/`both` for discovery metadata |
@@ -153,6 +154,12 @@ fastmcp run fastmcp-http.json        # via FastMCP project config (http)
 
 In `--http` mode the bind address comes from `MCP_HOST` (default `127.0.0.1`;
 the Docker image sets `0.0.0.0` so `-p` port mapping works).
+
+**Health check:** in `--http` mode `GET /health` (no auth, even with
+`MCP_AUTH_MODE` set) returns `200 {"status":"ok",...}` when Mealie is reachable
+and `503 {"status":"unhealthy",...}` otherwise — usable for Docker/Coolify/k8s
+probes, e.g. `docker run ... --http 8000` with
+`HEALTHCHECK CMD python -c "import urllib.request as u;u.urlopen('http://localhost:8000/health')"`.
 
 **HTTP auth:** `MCP_AUTH_MODE` picks the mechanism (default `none`, no effect on
 stdio):

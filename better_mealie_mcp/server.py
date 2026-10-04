@@ -11,6 +11,8 @@ Optional knobs:
   MEALIE_TIMEOUT      per-request timeout, seconds (default 60)
   MEALIE_VERIFY_SSL   verify TLS cert; "false" to accept self-signed (default true)
   MCP_SERVER_NAME     MCP server name advertised to clients (default "Better Mealie MCP")
+  MCP_HEALTH_TIMEOUT  timeout for the Mealie probe behind GET /health, seconds
+                      (default 5)
   MCP_HOST            bind address in --http mode (default 127.0.0.1; the Docker
                       image sets 0.0.0.0)
   MCP_AUTH_MODE       HTTP auth: "none" (default) | "key" | "authentik" |
@@ -27,6 +29,7 @@ Optional knobs:
 Run:
   uv run better-mealie-mcp              # stdio, from a source checkout
   uv run better-mealie-mcp --http 8000  # streamable-http on port 8000
+                                        # (health check: GET /health)
   docker run -i --rm ghcr.io/djwmarcx/better-mealie-mcp   # stdio, from GHCR
 """
 
@@ -42,6 +45,8 @@ import httpx
 from dotenv import load_dotenv
 from fastmcp import FastMCP
 from fastmcp.server.providers.openapi import MCPType, RouteMap
+from starlette.requests import Request
+from starlette.responses import JSONResponse
 
 from .auth import build_auth
 from .naming import build_names, normalize, slim
@@ -170,6 +175,26 @@ def build_server() -> FastMCP:
 
 
 mcp = build_server()
+
+HEALTH_TIMEOUT = float(os.environ.get("MCP_HEALTH_TIMEOUT", "5"))
+
+
+@mcp.custom_route("/health", methods=["GET"])
+async def health(_request: Request) -> JSONResponse:
+    """Health check (HTTP mode, unauthenticated): 200 if Mealie is reachable, else 503.
+
+    Probes Mealie's public /api/app/about, so it also reports the live Mealie version.
+    """
+    body: dict = {"mcp_version": MEALIE_VERSION, "mealie_url": BASE_URL}
+    try:
+        async with httpx.AsyncClient(timeout=HEALTH_TIMEOUT, verify=VERIFY_SSL) as c:
+            resp = await c.get(f"{BASE_URL}/api/app/about")
+        resp.raise_for_status()
+        body.update(status="ok", mealie="up", mealie_live_version=resp.json().get("version"))
+        return JSONResponse(body)
+    except Exception as exc:  # noqa: BLE001 - any failure means unhealthy
+        body.update(status="unhealthy", mealie="down", error=type(exc).__name__)
+        return JSONResponse(body, status_code=503)
 
 
 def main() -> None:
