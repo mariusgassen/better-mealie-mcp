@@ -3,7 +3,7 @@
 # Multi-stage: uv resolves deps, slim Python runs them.
 
 # --- Build stage ---
-FROM ghcr.io/astral-sh/uv:python3.14-bookworm-slim AS builder
+FROM ghcr.io/astral-sh/uv:python3.15-bookworm-slim AS builder
 
 WORKDIR /app
 ENV UV_COMPILE_BYTECODE=1 UV_LINK_MODE=copy
@@ -21,7 +21,7 @@ RUN --mount=type=cache,target=/root/.cache/uv \
     uv sync --locked --no-dev --no-editable
 
 # --- Runtime stage ---
-FROM python:3.14-slim
+FROM python:3.15-slim
 
 LABEL org.opencontainers.image.title="Better Mealie MCP" \
       org.opencontainers.image.description="MCP server exposing every Mealie API endpoint via FastMCP" \

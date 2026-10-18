@@ -5,7 +5,7 @@
 <p>
   <img src="https://img.shields.io/badge/tools-266-blue" alt="266 tools">
   <a href="https://github.com/jlowin/fastmcp"><img src="https://img.shields.io/badge/Built%20with-FastMCP-purple" alt="Built with FastMCP"></a>
-  <img src="https://img.shields.io/badge/python-3.14%2B-blue" alt="Python 3.14+">
+  <img src="https://img.shields.io/badge/python-3.15%2B-blue" alt="Python 3.15+">
   <img src="https://img.shields.io/badge/Mealie-v3.28.0-brightgreen" alt="Mealie v3.28.0">
 </p>
 <p>

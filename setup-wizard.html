@@ -730,7 +730,7 @@
   function syncMethod() {
     $("#installHint").innerHTML = state.method === "docker"
       ? 'needs <a href="https://docs.docker.com/get-docker/">Docker</a>'
-      : 'needs Python 3.14+ and <a href="https://docs.astral.sh/uv/">uv</a>';
+      : 'needs Python 3.15+ and <a href="https://docs.astral.sh/uv/">uv</a>';
     syncTransport();
   }
   function syncTransport() {
