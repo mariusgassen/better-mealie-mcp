@@ -1,8 +1,8 @@
 # Better Mealie MCP — Tool Reference
 
-**266 tools**, auto-generated from Mealie's OpenAPI spec. Every endpoint included, none excluded.
+**278 tools**, auto-generated from Mealie's OpenAPI spec. Every endpoint included, none excluded.
 
-## `admin` (38)
+## `admin` (44)
 
 | tool | method | path |
 |------|--------|------|
@@ -21,11 +21,14 @@
 | `create_admin_users_password_reset_token` | POST | `/api/admin/users/password-reset-token` |
 | `create_admin_users_unlock` | POST | `/api/admin/users/unlock` |
 | `delete_admin_backups_by_file_name` | DELETE | `/api/admin/backups/{file_name}` |
+| `delete_admin_groups_by_group_ai_providers_prompts_by_nam` | DELETE | `/api/admin/groups/{group_id}/ai-providers/prompts/{name}` |
 | `delete_admin_groups_by_group_ai_providers_providers_by_p` | DELETE | `/api/admin/groups/{group_id}/ai-providers/providers/{provider_id}` |
+| `delete_admin_groups_by_group_ai_providers_request_log` | DELETE | `/api/admin/groups/{group_id}/ai-providers/request-log` |
 | `delete_admin_groups_by_item` | DELETE | `/api/admin/groups/{item_id}` |
 | `delete_admin_households_by_item` | DELETE | `/api/admin/households/{item_id}` |
 | `delete_admin_users_by_item` | DELETE | `/api/admin/users/{item_id}` |
 | `get_admin_backups_by_file_name` | GET | `/api/admin/backups/{file_name}` |
+| `get_admin_groups_by_group_ai_providers_prompts_by_name` | GET | `/api/admin/groups/{group_id}/ai-providers/prompts/{name}` |
 | `get_admin_groups_by_group_ai_providers_providers_by_prov` | GET | `/api/admin/groups/{group_id}/ai-providers/providers/{provider_id}` |
 | `get_admin_groups_by_item` | GET | `/api/admin/groups/{item_id}` |
 | `get_admin_households_by_item` | GET | `/api/admin/households/{item_id}` |
@@ -36,10 +39,13 @@
 | `list_admin_backups` | GET | `/api/admin/backups` |
 | `list_admin_email` | GET | `/api/admin/email` |
 | `list_admin_groups` | GET | `/api/admin/groups` |
+| `list_admin_groups_by_group_ai_providers_prompts` | GET | `/api/admin/groups/{group_id}/ai-providers/prompts` |
+| `list_admin_groups_by_group_ai_providers_request_log` | GET | `/api/admin/groups/{group_id}/ai-providers/request-log` |
 | `list_admin_households` | GET | `/api/admin/households` |
 | `list_admin_maintenance` | GET | `/api/admin/maintenance` |
 | `list_admin_maintenance_storage` | GET | `/api/admin/maintenance/storage` |
 | `list_admin_users` | GET | `/api/admin/users` |
+| `update_admin_groups_by_group_ai_providers_prompts_by_nam` | PUT | `/api/admin/groups/{group_id}/ai-providers/prompts/{name}` |
 | `update_admin_groups_by_group_ai_providers_providers_by_p` | PUT | `/api/admin/groups/{group_id}/ai-providers/providers/{provider_id}` |
 | `update_admin_groups_by_item` | PUT | `/api/admin/groups/{item_id}` |
 | `update_admin_households_by_item` | PUT | `/api/admin/households/{item_id}` |
@@ -106,7 +112,7 @@
 | `update_foods_by_item` | PUT | `/api/foods/{item_id}` |
 | `update_foods_merge` | PUT | `/api/foods/merge` |
 
-## `groups` (27)
+## `groups` (33)
 
 | tool | method | path |
 |------|--------|------|
@@ -117,14 +123,19 @@
 | `create_groups_migrations` | POST | `/api/groups/migrations` |
 | `create_groups_seeders_foods` | POST | `/api/groups/seeders/foods` |
 | `create_groups_seeders_units` | POST | `/api/groups/seeders/units` |
+| `delete_groups_ai_providers_prompts_by_name` | DELETE | `/api/groups/ai-providers/prompts/{name}` |
 | `delete_groups_ai_providers_providers_by_provider` | DELETE | `/api/groups/ai-providers/providers/{provider_id}` |
+| `delete_groups_ai_providers_request_log` | DELETE | `/api/groups/ai-providers/request-log` |
 | `delete_groups_labels_by_item` | DELETE | `/api/groups/labels/{item_id}` |
 | `delete_groups_reports_by_item` | DELETE | `/api/groups/reports/{item_id}` |
+| `get_groups_ai_providers_prompts_by_name` | GET | `/api/groups/ai-providers/prompts/{name}` |
 | `get_groups_ai_providers_providers_by_provider` | GET | `/api/groups/ai-providers/providers/{provider_id}` |
 | `get_groups_households_by_household_slug` | GET | `/api/groups/households/{household_slug}` |
 | `get_groups_labels_by_item` | GET | `/api/groups/labels/{item_id}` |
 | `get_groups_members_by_username_or` | GET | `/api/groups/members/{username_or_id}` |
 | `get_groups_reports_by_item` | GET | `/api/groups/reports/{item_id}` |
+| `list_groups_ai_providers_prompts` | GET | `/api/groups/ai-providers/prompts` |
+| `list_groups_ai_providers_request_log` | GET | `/api/groups/ai-providers/request-log` |
 | `list_groups_ai_providers_settings` | GET | `/api/groups/ai-providers/settings` |
 | `list_groups_households` | GET | `/api/groups/households` |
 | `list_groups_labels` | GET | `/api/groups/labels` |
@@ -133,6 +144,7 @@
 | `list_groups_reports` | GET | `/api/groups/reports` |
 | `list_groups_self` | GET | `/api/groups/self` |
 | `list_groups_storage` | GET | `/api/groups/storage` |
+| `update_groups_ai_providers_prompts_by_name` | PUT | `/api/groups/ai-providers/prompts/{name}` |
 | `update_groups_ai_providers_providers_by_provider` | PUT | `/api/groups/ai-providers/providers/{provider_id}` |
 | `update_groups_ai_providers_settings` | PUT | `/api/groups/ai-providers/settings` |
 | `update_groups_labels_by_item` | PUT | `/api/groups/labels/{item_id}` |
