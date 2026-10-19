@@ -3,7 +3,7 @@
   "info": {
     "title": "Mealie",
     "description": "\nMealie is a web application for managing your recipes, meal plans, and shopping lists. This is the Restful\nAPI interactive documentation that can be used to explore the API. If you're justing getting started with\nthe API and want to get started quickly, you can use the\n[API Usage | Mealie Docs](https://docs.mealie.io/documentation/getting-started/api-usage/)\nas a reference for how to get started.\n\n\nIf you have any questions or comments about mealie, please use the discord server to talk to the developers or other\ncommunity members. If you'd like to file an issue, please use the\n[GitHub Issue Tracker | Mealie](https://github.com/mealie-recipes/mealie/issues/new/choose)\n\n\n## Helpful Links\n- [Home Page](https://mealie.io)\n- [Documentation](https://docs.mealie.io)\n- [Discord](https://discord.gg/QuStdQGSGK)\n- [Demo](https://demo.mealie.io)\n",
-    "version": "v3.28.0"
+    "version": "nightly"
   },
   "paths": {
     "/api/app/about": {
@@ -68,6 +68,57 @@
                 }
               }
             }
+          }
+        }
+      }
+    },
+    "/api/app/about/icons/{name}": {
+      "get": {
+        "tags": [
+          "App: About"
+        ],
+        "summary": "Get App Icon",
+        "description": "The app icon / favicon, drawn in the server's primary color so it follows the theme",
+        "operationId": "get_app_icon_api_app_about_icons__name__get",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Name"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/app/about/branding-logo": {
+      "get": {
+        "tags": [
+          "App: About"
+        ],
+        "summary": "Get App Branding Logo",
+        "description": "Get's the custom branding logo, if configured",
+        "operationId": "get_app_branding_logo_api_app_about_branding_logo_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response"
           }
         }
       }
@@ -204,6 +255,26 @@
                 "schema": {
                   "$ref": "#/components/schemas/HTTPValidationError"
                 }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/reverse-proxy": {
+      "get": {
+        "tags": [
+          "Users: Authentication"
+        ],
+        "summary": "Reverse Proxy Login",
+        "description": "Authenticate a user using a username forwarded by a trusted reverse proxy header",
+        "operationId": "reverse_proxy_login_api_auth_reverse_proxy_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
               }
             }
           }
@@ -5820,6 +5891,386 @@
         }
       }
     },
+    "/api/households/mealplans/ical": {
+      "get": {
+        "tags": [
+          "Households: Meal Plans",
+          "Households: Meal Plans"
+        ],
+        "summary": "Get Ical Token",
+        "description": "Returns the token for the household's meal plan iCal feed, or null if the feed is disabled",
+        "operationId": "get_ical_token_api_households_mealplans_ical_get",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "accept-language",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Accept-Language"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReadMealPlanICalToken"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Households: Meal Plans",
+          "Households: Meal Plans"
+        ],
+        "summary": "Create Ical Token",
+        "description": "Enables the meal plan iCal feed, replacing any existing token so old feed URLs stop working",
+        "operationId": "create_ical_token_api_households_mealplans_ical_post",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "accept-language",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Accept-Language"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReadMealPlanICalToken"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Households: Meal Plans",
+          "Households: Meal Plans"
+        ],
+        "summary": "Delete Ical Token",
+        "description": "Disables the meal plan iCal feed",
+        "operationId": "delete_ical_token_api_households_mealplans_ical_delete",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "accept-language",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Accept-Language"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReadMealPlanICalToken"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/households/mealplans/ical/{token}": {
+      "get": {
+        "tags": [
+          "Households: Meal Plans"
+        ],
+        "summary": "Get Mealplan Ical Feed",
+        "description": "Public iCal feed of the household's meal plan. No authentication is required;\naccess is controlled by the secret token in the URL.",
+        "operationId": "get_mealplan_ical_feed_api_households_mealplans_ical__token__get",
+        "parameters": [
+          {
+            "name": "token",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Token"
+            }
+          },
+          {
+            "name": "types",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PlanEntryType"
+                  }
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Types"
+            }
+          },
+          {
+            "name": "includeNotes",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": true,
+              "title": "Includenotes"
+            }
+          },
+          {
+            "name": "tz",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Tz"
+            }
+          },
+          {
+            "name": "breakfast",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "time"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Breakfast"
+            }
+          },
+          {
+            "name": "lunch",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "time"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Lunch"
+            }
+          },
+          {
+            "name": "dinner",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "time"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Dinner"
+            }
+          },
+          {
+            "name": "side",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "time"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Side"
+            }
+          },
+          {
+            "name": "snack",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "time"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Snack"
+            }
+          },
+          {
+            "name": "drink",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "time"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Drink"
+            }
+          },
+          {
+            "name": "dessert",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "time"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Dessert"
+            }
+          },
+          {
+            "name": "accept-language",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Accept-Language"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/households/mealplans": {
       "get": {
         "tags": [
@@ -6901,6 +7352,370 @@
                 }
               }
             }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/groups/ai-providers/prompts": {
+      "get": {
+        "tags": [
+          "Groups: AI Prompts",
+          "Groups: AI Prompts"
+        ],
+        "summary": "Get Ai Prompts",
+        "operationId": "get_ai_prompts_api_groups_ai_providers_prompts_get",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "accept-language",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Accept-Language"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AIPromptOut"
+                  },
+                  "title": "Response Get Ai Prompts Api Groups Ai Providers Prompts Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/groups/ai-providers/prompts/{name}": {
+      "get": {
+        "tags": [
+          "Groups: AI Prompts",
+          "Groups: AI Prompts"
+        ],
+        "summary": "Get Ai Prompt",
+        "operationId": "get_ai_prompt_api_groups_ai_providers_prompts__name__get",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Name"
+            }
+          },
+          {
+            "name": "accept-language",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Accept-Language"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AIPromptOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Groups: AI Prompts",
+          "Groups: AI Prompts"
+        ],
+        "summary": "Update Ai Prompt",
+        "operationId": "update_ai_prompt_api_groups_ai_providers_prompts__name__put",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Name"
+            }
+          },
+          {
+            "name": "accept-language",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Accept-Language"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AIPromptOverrideUpdate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AIPromptOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Groups: AI Prompts",
+          "Groups: AI Prompts"
+        ],
+        "summary": "Reset Ai Prompt",
+        "description": "Discards the group's override for this prompt, reverting it to the default.",
+        "operationId": "reset_ai_prompt_api_groups_ai_providers_prompts__name__delete",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Name"
+            }
+          },
+          {
+            "name": "accept-language",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Accept-Language"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AIPromptOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/groups/ai-providers/request-log": {
+      "get": {
+        "tags": [
+          "Groups: AI Request Log",
+          "Groups: AI Request Log"
+        ],
+        "summary": "Get Ai Request Log",
+        "description": "The group's most recent AI requests (newest first), as sent and as answered.",
+        "operationId": "get_ai_request_log_api_groups_ai_providers_request_log_get",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "accept-language",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Accept-Language"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AIRequestLogEntry"
+                  },
+                  "title": "Response Get Ai Request Log Api Groups Ai Providers Request Log Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Groups: AI Request Log",
+          "Groups: AI Request Log"
+        ],
+        "summary": "Clear Ai Request Log",
+        "operationId": "clear_ai_request_log_api_groups_ai_providers_request_log_delete",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "accept-language",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Accept-Language"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
           },
           "422": {
             "description": "Validation Error",
@@ -8043,6 +8858,132 @@
             "application/json": {
               "schema": {
                 "$ref": "#/components/schemas/MultiPurposeLabelCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MultiPurposeLabelOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/groups/labels/empty": {
+      "get": {
+        "tags": [
+          "Groups: Multi Purpose Labels",
+          "Groups: Multi Purpose Labels"
+        ],
+        "summary": "Get All Empty",
+        "description": "Returns a list of labels that are not used by any food or shopping list item",
+        "operationId": "get_all_empty_api_groups_labels_empty_get",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "accept-language",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Accept-Language"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MultiPurposeLabelOut"
+                  },
+                  "title": "Response Get All Empty Api Groups Labels Empty Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/groups/labels/merge": {
+      "post": {
+        "tags": [
+          "Groups: Multi Purpose Labels",
+          "Groups: Multi Purpose Labels"
+        ],
+        "summary": "Merge Labels",
+        "description": "Merges the from_id label into the to_id label, then deletes from_id.",
+        "operationId": "merge_labels_api_groups_labels_merge_post",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "accept-language",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Accept-Language"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MultiPurposeLabelMerge"
               }
             }
           }
@@ -9603,7 +10544,7 @@
               "schema": {
                 "type": "array",
                 "items": {
-                  "$ref": "#/components/schemas/Recipe-Input"
+                  "$ref": "#/components/schemas/RecipeIn"
                 },
                 "title": "Data"
               }
@@ -9667,7 +10608,7 @@
               "schema": {
                 "type": "array",
                 "items": {
-                  "$ref": "#/components/schemas/Recipe-Input"
+                  "$ref": "#/components/schemas/RecipeIn"
                 },
                 "title": "Data"
               }
@@ -10032,7 +10973,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/Recipe-Input"
+                "$ref": "#/components/schemas/RecipeIn"
               }
             }
           }
@@ -10102,7 +11043,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/Recipe-Input"
+                "$ref": "#/components/schemas/RecipeIn"
               }
             }
           }
@@ -13262,6 +14203,132 @@
         }
       }
     },
+    "/api/organizers/tools/empty": {
+      "get": {
+        "tags": [
+          "Organizer: Tools",
+          "Organizer: Tools"
+        ],
+        "summary": "Get All Empty",
+        "description": "Returns a list of tools that are not used by any recipe",
+        "operationId": "get_all_empty_api_organizers_tools_empty_get",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "accept-language",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Accept-Language"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/RecipeToolOut"
+                  },
+                  "title": "Response Get All Empty Api Organizers Tools Empty Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/organizers/tools/merge": {
+      "post": {
+        "tags": [
+          "Organizer: Tools",
+          "Organizer: Tools"
+        ],
+        "summary": "Merge Tools",
+        "description": "Merges the from_id tool into the to_id tool, then deletes from_id.",
+        "operationId": "merge_tools_api_organizers_tools_merge_post",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "accept-language",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Accept-Language"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RecipeToolMerge"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RecipeToolOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/organizers/tools/{item_id}": {
       "get": {
         "tags": [
@@ -14546,6 +15613,66 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/IngredientFood-Output"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/foods/empty": {
+      "get": {
+        "tags": [
+          "Recipes: Foods",
+          "Recipes: Foods"
+        ],
+        "summary": "Get All Empty",
+        "description": "Returns a list of foods that are not used by any recipe",
+        "operationId": "get_all_empty_api_foods_empty_get",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "accept-language",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Accept-Language"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/IngredientFood-Output"
+                  },
+                  "title": "Response Get All Empty Api Foods Empty Get"
                 }
               }
             }
@@ -17137,6 +18264,424 @@
         }
       }
     },
+    "/api/admin/groups/{group_id}/ai-providers/prompts": {
+      "get": {
+        "tags": [
+          "Admin: AI Prompts"
+        ],
+        "summary": "Get Ai Prompts",
+        "operationId": "get_ai_prompts_api_admin_groups__group_id__ai_providers_prompts_get",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "group_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Group Id"
+            }
+          },
+          {
+            "name": "accept-language",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Accept-Language"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AIPromptOut"
+                  },
+                  "title": "Response Get Ai Prompts Api Admin Groups  Group Id  Ai Providers Prompts Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/groups/{group_id}/ai-providers/prompts/{name}": {
+      "get": {
+        "tags": [
+          "Admin: AI Prompts"
+        ],
+        "summary": "Get Ai Prompt",
+        "operationId": "get_ai_prompt_api_admin_groups__group_id__ai_providers_prompts__name__get",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "group_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Group Id"
+            }
+          },
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Name"
+            }
+          },
+          {
+            "name": "accept-language",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Accept-Language"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AIPromptOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Admin: AI Prompts"
+        ],
+        "summary": "Update Ai Prompt",
+        "operationId": "update_ai_prompt_api_admin_groups__group_id__ai_providers_prompts__name__put",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "group_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Group Id"
+            }
+          },
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Name"
+            }
+          },
+          {
+            "name": "accept-language",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Accept-Language"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AIPromptOverrideUpdate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AIPromptOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Admin: AI Prompts"
+        ],
+        "summary": "Reset Ai Prompt",
+        "description": "Discards the group's override for this prompt, reverting it to the default.",
+        "operationId": "reset_ai_prompt_api_admin_groups__group_id__ai_providers_prompts__name__delete",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "group_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Group Id"
+            }
+          },
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Name"
+            }
+          },
+          {
+            "name": "accept-language",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Accept-Language"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AIPromptOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/groups/{group_id}/ai-providers/request-log": {
+      "get": {
+        "tags": [
+          "Admin: AI Request Log"
+        ],
+        "summary": "Get Ai Request Log",
+        "description": "The group's most recent AI requests (newest first), as sent and as answered.",
+        "operationId": "get_ai_request_log_api_admin_groups__group_id__ai_providers_request_log_get",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "group_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Group Id"
+            }
+          },
+          {
+            "name": "accept-language",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Accept-Language"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AIRequestLogEntry"
+                  },
+                  "title": "Response Get Ai Request Log Api Admin Groups  Group Id  Ai Providers Request Log Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Admin: AI Request Log"
+        ],
+        "summary": "Clear Ai Request Log",
+        "operationId": "clear_ai_request_log_api_admin_groups__group_id__ai_providers_request_log_delete",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "group_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Group Id"
+            }
+          },
+          {
+            "name": "accept-language",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Accept-Language"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/admin/email": {
       "get": {
         "tags": [
@@ -17945,6 +19490,357 @@
                 }
               }
             }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/theme": {
+      "get": {
+        "tags": [
+          "Admin: Theme"
+        ],
+        "summary": "Get Theme",
+        "description": "Get the server theme in effect, the defaults behind it, and which values an admin has overridden",
+        "operationId": "get_theme_api_admin_theme_get",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "accept-language",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Accept-Language"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminThemeOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Admin: Theme"
+        ],
+        "summary": "Update Theme",
+        "description": "Set or clear individual theme colors for the whole server; only the fields sent are changed",
+        "operationId": "update_theme_api_admin_theme_put",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "accept-language",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Accept-Language"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AppThemeUpdate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminThemeOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Admin: Theme"
+        ],
+        "summary": "Reset Theme",
+        "description": "Remove every admin override so the theme falls back to the environment variables / defaults",
+        "operationId": "reset_theme_api_admin_theme_delete",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "accept-language",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Accept-Language"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminThemeOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/theme/presets": {
+      "get": {
+        "tags": [
+          "Admin: Theme"
+        ],
+        "summary": "Get Presets",
+        "description": "List the palettes admins have saved, by name",
+        "operationId": "get_presets_api_admin_theme_presets_get",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "accept-language",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Accept-Language"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ThemePresetOut"
+                  },
+                  "title": "Response Get Presets Api Admin Theme Presets Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Admin: Theme"
+        ],
+        "summary": "Save Preset",
+        "description": "Save a palette under a name; an existing preset with that name is replaced",
+        "operationId": "save_preset_api_admin_theme_presets_post",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "accept-language",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Accept-Language"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ThemePresetCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ThemePresetOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/theme/presets/{preset_id}": {
+      "delete": {
+        "tags": [
+          "Admin: Theme"
+        ],
+        "summary": "Delete Preset",
+        "description": "Delete a saved palette",
+        "operationId": "delete_preset_api_admin_theme_presets__preset_id__delete",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "preset_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Preset Id"
+            }
+          },
+          {
+            "name": "accept-language",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Accept-Language"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
           },
           "422": {
             "description": "Validation Error",
@@ -20287,792 +22183,52 @@
           }
         }
       }
-    },
-    "/api/groups/ai-providers/prompts": {
-      "get": {
-        "tags": [
-          "Groups: AI Prompts",
-          "Groups: AI Prompts"
-        ],
-        "summary": "Get Ai Prompts",
-        "operationId": "get_ai_prompts_api_groups_ai_providers_prompts_get",
-        "security": [
-          {
-            "OAuth2PasswordBearer": []
-          }
-        ],
-        "parameters": [
-          {
-            "name": "accept-language",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "Accept-Language"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/AIPromptOut"
-                  },
-                  "title": "Response Get Ai Prompts Api Groups Ai Providers Prompts Get"
-                }
-              }
-            }
-          },
-          "422": {
-            "description": "Validation Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/groups/ai-providers/prompts/{name}": {
-      "get": {
-        "tags": [
-          "Groups: AI Prompts",
-          "Groups: AI Prompts"
-        ],
-        "summary": "Get Ai Prompt",
-        "operationId": "get_ai_prompt_api_groups_ai_providers_prompts__name__get",
-        "security": [
-          {
-            "OAuth2PasswordBearer": []
-          }
-        ],
-        "parameters": [
-          {
-            "name": "name",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "title": "Name"
-            }
-          },
-          {
-            "name": "accept-language",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "Accept-Language"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/AIPromptOut"
-                }
-              }
-            }
-          },
-          "422": {
-            "description": "Validation Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            }
-          }
-        }
-      },
-      "put": {
-        "tags": [
-          "Groups: AI Prompts",
-          "Groups: AI Prompts"
-        ],
-        "summary": "Update Ai Prompt",
-        "operationId": "update_ai_prompt_api_groups_ai_providers_prompts__name__put",
-        "security": [
-          {
-            "OAuth2PasswordBearer": []
-          }
-        ],
-        "parameters": [
-          {
-            "name": "name",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "title": "Name"
-            }
-          },
-          {
-            "name": "accept-language",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "Accept-Language"
-            }
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/AIPromptOverrideUpdate"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/AIPromptOut"
-                }
-              }
-            }
-          },
-          "422": {
-            "description": "Validation Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            }
-          }
-        }
-      },
-      "delete": {
-        "tags": [
-          "Groups: AI Prompts",
-          "Groups: AI Prompts"
-        ],
-        "summary": "Reset Ai Prompt",
-        "description": "Discards the group's override for this prompt, reverting it to the default.",
-        "operationId": "reset_ai_prompt_api_groups_ai_providers_prompts__name__delete",
-        "security": [
-          {
-            "OAuth2PasswordBearer": []
-          }
-        ],
-        "parameters": [
-          {
-            "name": "name",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "title": "Name"
-            }
-          },
-          {
-            "name": "accept-language",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "Accept-Language"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/AIPromptOut"
-                }
-              }
-            }
-          },
-          "422": {
-            "description": "Validation Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/groups/ai-providers/request-log": {
-      "get": {
-        "tags": [
-          "Groups: AI Request Log",
-          "Groups: AI Request Log"
-        ],
-        "summary": "Get Ai Request Log",
-        "description": "The group's most recent AI requests (newest first), as sent and as answered.",
-        "operationId": "get_ai_request_log_api_groups_ai_providers_request_log_get",
-        "security": [
-          {
-            "OAuth2PasswordBearer": []
-          }
-        ],
-        "parameters": [
-          {
-            "name": "accept-language",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "Accept-Language"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/AIRequestLogEntry"
-                  },
-                  "title": "Response Get Ai Request Log Api Groups Ai Providers Request Log Get"
-                }
-              }
-            }
-          },
-          "422": {
-            "description": "Validation Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            }
-          }
-        }
-      },
-      "delete": {
-        "tags": [
-          "Groups: AI Request Log",
-          "Groups: AI Request Log"
-        ],
-        "summary": "Clear Ai Request Log",
-        "operationId": "clear_ai_request_log_api_groups_ai_providers_request_log_delete",
-        "security": [
-          {
-            "OAuth2PasswordBearer": []
-          }
-        ],
-        "parameters": [
-          {
-            "name": "accept-language",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "Accept-Language"
-            }
-          }
-        ],
-        "responses": {
-          "204": {
-            "description": "Successful Response"
-          },
-          "422": {
-            "description": "Validation Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/admin/groups/{group_id}/ai-providers/prompts": {
-      "get": {
-        "tags": [
-          "Admin: AI Prompts"
-        ],
-        "summary": "Get Ai Prompts",
-        "operationId": "get_ai_prompts_api_admin_groups__group_id__ai_providers_prompts_get",
-        "security": [
-          {
-            "OAuth2PasswordBearer": []
-          }
-        ],
-        "parameters": [
-          {
-            "name": "group_id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid",
-              "title": "Group Id"
-            }
-          },
-          {
-            "name": "accept-language",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "Accept-Language"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/AIPromptOut"
-                  },
-                  "title": "Response Get Ai Prompts Api Admin Groups  Group Id  Ai Providers Prompts Get"
-                }
-              }
-            }
-          },
-          "422": {
-            "description": "Validation Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/admin/groups/{group_id}/ai-providers/prompts/{name}": {
-      "get": {
-        "tags": [
-          "Admin: AI Prompts"
-        ],
-        "summary": "Get Ai Prompt",
-        "operationId": "get_ai_prompt_api_admin_groups__group_id__ai_providers_prompts__name__get",
-        "security": [
-          {
-            "OAuth2PasswordBearer": []
-          }
-        ],
-        "parameters": [
-          {
-            "name": "group_id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid",
-              "title": "Group Id"
-            }
-          },
-          {
-            "name": "name",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "title": "Name"
-            }
-          },
-          {
-            "name": "accept-language",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "Accept-Language"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/AIPromptOut"
-                }
-              }
-            }
-          },
-          "422": {
-            "description": "Validation Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            }
-          }
-        }
-      },
-      "put": {
-        "tags": [
-          "Admin: AI Prompts"
-        ],
-        "summary": "Update Ai Prompt",
-        "operationId": "update_ai_prompt_api_admin_groups__group_id__ai_providers_prompts__name__put",
-        "security": [
-          {
-            "OAuth2PasswordBearer": []
-          }
-        ],
-        "parameters": [
-          {
-            "name": "group_id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid",
-              "title": "Group Id"
-            }
-          },
-          {
-            "name": "name",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "title": "Name"
-            }
-          },
-          {
-            "name": "accept-language",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "Accept-Language"
-            }
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/AIPromptOverrideUpdate"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/AIPromptOut"
-                }
-              }
-            }
-          },
-          "422": {
-            "description": "Validation Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            }
-          }
-        }
-      },
-      "delete": {
-        "tags": [
-          "Admin: AI Prompts"
-        ],
-        "summary": "Reset Ai Prompt",
-        "description": "Discards the group's override for this prompt, reverting it to the default.",
-        "operationId": "reset_ai_prompt_api_admin_groups__group_id__ai_providers_prompts__name__delete",
-        "security": [
-          {
-            "OAuth2PasswordBearer": []
-          }
-        ],
-        "parameters": [
-          {
-            "name": "group_id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid",
-              "title": "Group Id"
-            }
-          },
-          {
-            "name": "name",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "title": "Name"
-            }
-          },
-          {
-            "name": "accept-language",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "Accept-Language"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/AIPromptOut"
-                }
-              }
-            }
-          },
-          "422": {
-            "description": "Validation Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/admin/groups/{group_id}/ai-providers/request-log": {
-      "get": {
-        "tags": [
-          "Admin: AI Request Log"
-        ],
-        "summary": "Get Ai Request Log",
-        "description": "The group's most recent AI requests (newest first), as sent and as answered.",
-        "operationId": "get_ai_request_log_api_admin_groups__group_id__ai_providers_request_log_get",
-        "security": [
-          {
-            "OAuth2PasswordBearer": []
-          }
-        ],
-        "parameters": [
-          {
-            "name": "group_id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid",
-              "title": "Group Id"
-            }
-          },
-          {
-            "name": "accept-language",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "Accept-Language"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/AIRequestLogEntry"
-                  },
-                  "title": "Response Get Ai Request Log Api Admin Groups  Group Id  Ai Providers Request Log Get"
-                }
-              }
-            }
-          },
-          "422": {
-            "description": "Validation Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            }
-          }
-        }
-      },
-      "delete": {
-        "tags": [
-          "Admin: AI Request Log"
-        ],
-        "summary": "Clear Ai Request Log",
-        "operationId": "clear_ai_request_log_api_admin_groups__group_id__ai_providers_request_log_delete",
-        "security": [
-          {
-            "OAuth2PasswordBearer": []
-          }
-        ],
-        "parameters": [
-          {
-            "name": "group_id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid",
-              "title": "Group Id"
-            }
-          },
-          {
-            "name": "accept-language",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "Accept-Language"
-            }
-          }
-        ],
-        "responses": {
-          "204": {
-            "description": "Successful Response"
-          },
-          "422": {
-            "description": "Validation Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            }
-          }
-        }
-      }
     }
   },
   "components": {
     "schemas": {
+      "AIPromptOut": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "content": {
+            "type": "string",
+            "title": "Content"
+          },
+          "defaultContent": {
+            "type": "string",
+            "title": "Defaultcontent"
+          },
+          "isOverridden": {
+            "type": "boolean",
+            "title": "Isoverridden"
+          }
+        },
+        "type": "object",
+        "required": [
+          "name",
+          "content",
+          "defaultContent",
+          "isOverridden"
+        ],
+        "title": "AIPromptOut",
+        "description": "A single AI prompt, identified by its dotted name (e.g. `recipes.parse-recipe-ingredients`).\n\n`content` is the prompt actually used (the override when one is set, otherwise\n`default_content`), while `default_content` is always the non-override baseline shipped with\nor configured for the server, so the editor can offer a \"reset to default\" action."
+      },
+      "AIPromptOverrideUpdate": {
+        "properties": {
+          "prompt": {
+            "type": "string",
+            "title": "Prompt"
+          }
+        },
+        "type": "object",
+        "required": [
+          "prompt"
+        ],
+        "title": "AIPromptOverrideUpdate"
+      },
       "AIProviderCreate": {
         "properties": {
           "name": {
@@ -21413,6 +22569,63 @@
         ],
         "title": "AIProviderUpdate"
       },
+      "AIRequestLogEntry": {
+        "properties": {
+          "timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Timestamp"
+          },
+          "requestType": {
+            "type": "string",
+            "title": "Requesttype"
+          },
+          "model": {
+            "type": "string",
+            "title": "Model"
+          },
+          "systemPrompt": {
+            "type": "string",
+            "title": "Systemprompt"
+          },
+          "userMessage": {
+            "type": "string",
+            "title": "Usermessage"
+          },
+          "rawResponse": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rawresponse"
+          },
+          "error": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Error"
+          }
+        },
+        "type": "object",
+        "required": [
+          "timestamp",
+          "requestType",
+          "model",
+          "systemPrompt",
+          "userMessage"
+        ],
+        "title": "AIRequestLogEntry",
+        "description": "One request sent to an AI provider, with exactly what was sent and what came back, so a\ngroup manager can check which prompt actually reached the model and how it answered."
+      },
       "AdminAboutInfo": {
         "properties": {
           "production": {
@@ -21469,6 +22682,10 @@
             "type": "string",
             "title": "Oidcprovidername"
           },
+          "enableReverseProxyAuth": {
+            "type": "boolean",
+            "title": "Enablereverseproxyauth"
+          },
           "tokenTime": {
             "type": "integer",
             "title": "Tokentime"
@@ -21480,6 +22697,22 @@
             "type": "array",
             "title": "Allowediframehosts",
             "default": []
+          },
+          "brandingName": {
+            "type": "string",
+            "title": "Brandingname",
+            "default": "Mealie"
+          },
+          "brandingLogoUrl": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Brandinglogourl"
           },
           "versionLatest": {
             "type": "string",
@@ -21535,6 +22768,7 @@
           "enableOidc",
           "oidcRedirect",
           "oidcProviderName",
+          "enableReverseProxyAuth",
           "tokenTime",
           "versionLatest",
           "apiPort",
@@ -21546,6 +22780,30 @@
           "recipeScraperVersion"
         ],
         "title": "AdminAboutInfo"
+      },
+      "AdminThemeOut": {
+        "properties": {
+          "theme": {
+            "$ref": "#/components/schemas/AppTheme"
+          },
+          "defaults": {
+            "$ref": "#/components/schemas/AppTheme"
+          },
+          "overridden": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Overridden"
+          }
+        },
+        "type": "object",
+        "required": [
+          "theme",
+          "defaults",
+          "overridden"
+        ],
+        "title": "AdminThemeOut"
       },
       "AllBackups": {
         "properties": {
@@ -21627,6 +22885,10 @@
             "type": "string",
             "title": "Oidcprovidername"
           },
+          "enableReverseProxyAuth": {
+            "type": "boolean",
+            "title": "Enablereverseproxyauth"
+          },
           "tokenTime": {
             "type": "integer",
             "title": "Tokentime"
@@ -21638,6 +22900,22 @@
             "type": "array",
             "title": "Allowediframehosts",
             "default": []
+          },
+          "brandingName": {
+            "type": "string",
+            "title": "Brandingname",
+            "default": "Mealie"
+          },
+          "brandingLogoUrl": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Brandinglogourl"
           }
         },
         "type": "object",
@@ -21650,6 +22928,7 @@
           "enableOidc",
           "oidcRedirect",
           "oidcProviderName",
+          "enableReverseProxyAuth",
           "tokenTime"
         ],
         "title": "AppInfo"
@@ -21747,6 +23026,16 @@
             "title": "Lighterror",
             "default": "#EF5350"
           },
+          "lightBackground": {
+            "type": "string",
+            "title": "Lightbackground",
+            "default": "#F2F2F7"
+          },
+          "lightSurface": {
+            "type": "string",
+            "title": "Lightsurface",
+            "default": "#FFFFFF"
+          },
           "darkPrimary": {
             "type": "string",
             "title": "Darkprimary",
@@ -21755,36 +23044,251 @@
           "darkAccent": {
             "type": "string",
             "title": "Darkaccent",
-            "default": "#007A99"
+            "default": "#40C8E0"
           },
           "darkSecondary": {
             "type": "string",
             "title": "Darksecondary",
-            "default": "#973542"
+            "default": "#E0657A"
           },
           "darkSuccess": {
             "type": "string",
             "title": "Darksuccess",
-            "default": "#43A047"
+            "default": "#30D158"
           },
           "darkInfo": {
             "type": "string",
             "title": "Darkinfo",
-            "default": "#1976D2"
+            "default": "#0A84FF"
           },
           "darkWarning": {
             "type": "string",
             "title": "Darkwarning",
-            "default": "#FF6D00"
+            "default": "#FFB340"
           },
           "darkError": {
             "type": "string",
             "title": "Darkerror",
-            "default": "#EF5350"
+            "default": "#FF6961"
+          },
+          "darkBackground": {
+            "type": "string",
+            "title": "Darkbackground",
+            "default": "#1C1C1E"
+          },
+          "darkSurface": {
+            "type": "string",
+            "title": "Darksurface",
+            "default": "#2C2C2E"
           }
         },
         "type": "object",
         "title": "AppTheme"
+      },
+      "AppThemeUpdate": {
+        "properties": {
+          "lightPrimary": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lightprimary"
+          },
+          "lightAccent": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lightaccent"
+          },
+          "lightSecondary": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lightsecondary"
+          },
+          "lightSuccess": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lightsuccess"
+          },
+          "lightInfo": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lightinfo"
+          },
+          "lightWarning": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lightwarning"
+          },
+          "lightError": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lighterror"
+          },
+          "lightBackground": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lightbackground"
+          },
+          "lightSurface": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lightsurface"
+          },
+          "darkPrimary": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Darkprimary"
+          },
+          "darkAccent": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Darkaccent"
+          },
+          "darkSecondary": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Darksecondary"
+          },
+          "darkSuccess": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Darksuccess"
+          },
+          "darkInfo": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Darkinfo"
+          },
+          "darkWarning": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Darkwarning"
+          },
+          "darkError": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Darkerror"
+          },
+          "darkBackground": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Darkbackground"
+          },
+          "darkSurface": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Darksurface"
+          }
+        },
+        "type": "object",
+        "title": "AppThemeUpdate",
+        "description": "A partial update of the server theme. Only the fields that are sent are touched: a color sets\n(or replaces) that value, while `null` or an empty string removes the admin override so the\nvalue falls back to the environment variable / built-in default."
       },
       "AssignCategories": {
         "properties": {
@@ -21859,7 +23363,8 @@
         "enum": [
           "Mealie",
           "LDAP",
-          "OIDC"
+          "OIDC",
+          "ReverseProxy"
         ],
         "title": "AuthMethod"
       },
@@ -21941,6 +23446,16 @@
             "title": "Createneworganizers",
             "default": false
           },
+          "includeTranscription": {
+            "type": "boolean",
+            "title": "Includetranscription",
+            "default": true
+          },
+          "convertMeasurementSystem": {
+            "type": "boolean",
+            "title": "Convertmeasurementsystem",
+            "default": true
+          },
           "images": {
             "items": {
               "type": "string",
@@ -21992,6 +23507,16 @@
             "type": "boolean",
             "title": "Createneworganizers",
             "default": false
+          },
+          "includeTranscription": {
+            "type": "boolean",
+            "title": "Includetranscription",
+            "default": true
+          },
+          "convertMeasurementSystem": {
+            "type": "boolean",
+            "title": "Convertmeasurementsystem",
+            "default": true
           },
           "images": {
             "items": {
@@ -22342,6 +23867,14 @@
             "type": "boolean",
             "title": "Oidcdisabled"
           },
+          "reverseProxyAuthReady": {
+            "type": "boolean",
+            "title": "Reverseproxyauthready"
+          },
+          "reverseProxyAuthDisabled": {
+            "type": "boolean",
+            "title": "Reverseproxyauthdisabled"
+          },
           "baseUrlSet": {
             "type": "boolean",
             "title": "Baseurlset"
@@ -22358,6 +23891,8 @@
           "ldapDisabled",
           "oidcReady",
           "oidcDisabled",
+          "reverseProxyAuthReady",
+          "reverseProxyAuthDisabled",
           "baseUrlSet",
           "isUpToDate"
         ],
@@ -22831,6 +24366,12 @@
               }
             ],
             "title": "Recipeid"
+          },
+          "recipeScale": {
+            "type": "number",
+            "exclusiveMinimum": 0.0,
+            "title": "Recipescale",
+            "default": 1.0
           }
         },
         "type": "object",
@@ -24660,6 +26201,11 @@
               }
             ]
           },
+          "recipeCount": {
+            "type": "integer",
+            "title": "Recipecount",
+            "default": 0
+          },
           "createdAt": {
             "anyOf": [
               {
@@ -24777,6 +26323,11 @@
                 "type": "null"
               }
             ]
+          },
+          "recipeCount": {
+            "type": "integer",
+            "title": "Recipecount",
+            "default": 0
           },
           "createdAt": {
             "anyOf": [
@@ -25484,6 +27035,15 @@
         ],
         "title": "MaintenanceSummary"
       },
+      "MeasurementSystem": {
+        "type": "string",
+        "enum": [
+          "us",
+          "metric"
+        ],
+        "title": "MeasurementSystem",
+        "description": "The measurement system a recipe's quantities are written in."
+      },
       "MergeFood": {
         "properties": {
           "fromFood": {
@@ -25541,6 +27101,26 @@
           "name"
         ],
         "title": "MultiPurposeLabelCreate"
+      },
+      "MultiPurposeLabelMerge": {
+        "properties": {
+          "fromId": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Fromid"
+          },
+          "toId": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Toid"
+          }
+        },
+        "type": "object",
+        "required": [
+          "fromId",
+          "toId"
+        ],
+        "title": "MultiPurposeLabelMerge"
       },
       "MultiPurposeLabelOut": {
         "properties": {
@@ -26936,6 +28516,16 @@
             "title": "Recipedisablecomments",
             "default": false
           },
+          "defaultMeasurementSystem": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/MeasurementSystem"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
           "id": {
             "type": "string",
             "format": "uuid",
@@ -26978,6 +28568,31 @@
         ],
         "title": "ReadInviteToken"
       },
+      "ReadMealPlanICalToken": {
+        "properties": {
+          "householdId": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Householdid"
+          },
+          "mealplanIcalToken": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Mealplanicaltoken"
+          }
+        },
+        "type": "object",
+        "required": [
+          "householdId"
+        ],
+        "title": "ReadMealPlanICalToken"
+      },
       "ReadPlanEntry": {
         "properties": {
           "date": {
@@ -27010,6 +28625,12 @@
               }
             ],
             "title": "Recipeid"
+          },
+          "recipeScale": {
+            "type": "number",
+            "exclusiveMinimum": 0.0,
+            "title": "Recipescale",
+            "default": 1.0
           },
           "id": {
             "type": "integer",
@@ -27221,6 +28842,45 @@
             ],
             "title": "Performtime"
           },
+          "totalTimeSeconds": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 2147483647.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Totaltimeseconds"
+          },
+          "prepTimeSeconds": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 2147483647.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Preptimeseconds"
+          },
+          "performTimeSeconds": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 2147483647.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Performtimeseconds"
+          },
           "description": {
             "anyOf": [
               {
@@ -27340,18 +29000,6 @@
               }
             ],
             "title": "Update At"
-          },
-          "lastMade": {
-            "anyOf": [
-              {
-                "type": "string",
-                "format": "date-time"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Lastmade"
           },
           "recipeIngredient": {
             "items": {
@@ -27577,6 +29225,45 @@
             ],
             "title": "Performtime"
           },
+          "totalTimeSeconds": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 2147483647.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Totaltimeseconds"
+          },
+          "prepTimeSeconds": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 2147483647.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Preptimeseconds"
+          },
+          "performTimeSeconds": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 2147483647.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Performtimeseconds"
+          },
           "description": {
             "anyOf": [
               {
@@ -27696,18 +29383,6 @@
               }
             ],
             "title": "Updatedat"
-          },
-          "lastMade": {
-            "anyOf": [
-              {
-                "type": "string",
-                "format": "date-time"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Lastmade"
           },
           "recipeIngredient": {
             "items": {
@@ -27889,6 +29564,59 @@
           "slug"
         ],
         "title": "RecipeCategory"
+      },
+      "RecipeCategoryIn": {
+        "properties": {
+          "id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Id"
+          },
+          "groupId": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Groupid"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "slug": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Slug"
+          },
+          "recipeCount": {
+            "type": "integer",
+            "title": "Recipecount",
+            "default": 0
+          }
+        },
+        "type": "object",
+        "required": [
+          "name"
+        ],
+        "title": "RecipeCategoryIn"
       },
       "RecipeCategoryPagination": {
         "properties": {
@@ -28154,6 +29882,390 @@
         },
         "type": "object",
         "title": "RecipeDuplicate"
+      },
+      "RecipeIn": {
+        "properties": {
+          "id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Id"
+          },
+          "userId": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Userid"
+          },
+          "householdId": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Householdid"
+          },
+          "groupId": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Groupid"
+          },
+          "name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          },
+          "slug": {
+            "type": "string",
+            "title": "Slug",
+            "default": ""
+          },
+          "image": {
+            "anyOf": [
+              {},
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Image"
+          },
+          "recipeServings": {
+            "type": "number",
+            "title": "Recipeservings",
+            "default": 0
+          },
+          "recipeYieldQuantity": {
+            "type": "number",
+            "title": "Recipeyieldquantity",
+            "default": 0
+          },
+          "recipeYield": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Recipeyield"
+          },
+          "totalTime": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Totaltime"
+          },
+          "prepTime": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Preptime"
+          },
+          "cookTime": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cooktime"
+          },
+          "performTime": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Performtime"
+          },
+          "totalTimeSeconds": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 2147483647.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Totaltimeseconds"
+          },
+          "prepTimeSeconds": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 2147483647.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Preptimeseconds"
+          },
+          "performTimeSeconds": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 2147483647.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Performtimeseconds"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description",
+            "default": ""
+          },
+          "recipeCategory": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/RecipeCategoryIn"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Recipecategory",
+            "default": []
+          },
+          "tags": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/RecipeTagIn"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tags",
+            "default": []
+          },
+          "tools": {
+            "items": {
+              "$ref": "#/components/schemas/RecipeToolIn"
+            },
+            "type": "array",
+            "title": "Tools",
+            "default": []
+          },
+          "rating": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rating"
+          },
+          "orgURL": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Orgurl"
+          },
+          "dateAdded": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Dateadded"
+          },
+          "dateUpdated": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Dateupdated"
+          },
+          "createdAt": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Createdat"
+          },
+          "update_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Update At"
+          },
+          "recipeIngredient": {
+            "items": {
+              "$ref": "#/components/schemas/RecipeIngredient-Input"
+            },
+            "type": "array",
+            "title": "Recipeingredient",
+            "default": []
+          },
+          "recipeInstructions": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/RecipeStep"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Recipeinstructions",
+            "default": []
+          },
+          "nutrition": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Nutrition"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "settings": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/RecipeSettings"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "assets": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/RecipeAsset"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Assets",
+            "default": []
+          },
+          "notes": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/RecipeNote"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notes",
+            "default": []
+          },
+          "extras": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Extras",
+            "default": {}
+          },
+          "comments": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/RecipeCommentOut-Input"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Comments",
+            "default": []
+          }
+        },
+        "type": "object",
+        "title": "RecipeIn",
+        "description": "Recipe as accepted on the write path only (create/update/patch request bodies).\n\nUnlike Recipe -- which is also used for responses and must guarantee real ids/slugs on\nits organizers -- this allows a client (e.g. hand-edited or re-imported JSON) to submit\ntags/categories/tools that omit id/slug, to be resolved or generated server-side."
       },
       "RecipeIngredient-Input": {
         "properties": {
@@ -28833,6 +30945,45 @@
             ],
             "title": "Performtime"
           },
+          "totalTimeSeconds": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 2147483647.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Totaltimeseconds"
+          },
+          "prepTimeSeconds": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 2147483647.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Preptimeseconds"
+          },
+          "performTimeSeconds": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 2147483647.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Performtimeseconds"
+          },
           "description": {
             "anyOf": [
               {
@@ -28952,18 +31103,6 @@
               }
             ],
             "title": "Updatedat"
-          },
-          "lastMade": {
-            "anyOf": [
-              {
-                "type": "string",
-                "format": "date-time"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Lastmade"
           }
         },
         "type": "object",
@@ -29015,6 +31154,60 @@
           "slug"
         ],
         "title": "RecipeTag"
+      },
+      "RecipeTagIn": {
+        "properties": {
+          "id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Id"
+          },
+          "groupId": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Groupid"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "slug": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Slug"
+          },
+          "recipeCount": {
+            "type": "integer",
+            "title": "Recipecount",
+            "default": 0
+          }
+        },
+        "type": "object",
+        "required": [
+          "name"
+        ],
+        "title": "RecipeTagIn",
+        "description": "Lenient variant of RecipeTag accepted only on the recipe write path (JSON import/edit),\nwhere a client may omit id/slug and expect them to be resolved or generated server-side.\nNever used for responses -- RecipeTag itself stays strictly required there.\n\nDeliberately does not subclass RecipeTag: narrowing id/slug from required to optional in a\nsubclass would be an unsound field override (mypy correctly rejects it), so this is built as\nan independent sibling with the same fields instead, matching how RecipeToolCreate/Save/Out\nare already kept as separate classes elsewhere in this module rather than narrowing each other."
       },
       "RecipeTagPagination": {
         "properties": {
@@ -29428,6 +31621,88 @@
         ],
         "title": "RecipeToolCreate"
       },
+      "RecipeToolIn": {
+        "properties": {
+          "id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Id"
+          },
+          "groupId": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Groupid"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "slug": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Slug"
+          },
+          "recipeCount": {
+            "type": "integer",
+            "title": "Recipecount",
+            "default": 0
+          },
+          "householdsWithTool": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Householdswithtool",
+            "default": []
+          }
+        },
+        "type": "object",
+        "required": [
+          "name"
+        ],
+        "title": "RecipeToolIn",
+        "description": "Lenient variant of RecipeTool accepted only on the recipe write path. See RecipeTagIn."
+      },
+      "RecipeToolMerge": {
+        "properties": {
+          "fromId": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Fromid"
+          },
+          "toId": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Toid"
+          }
+        },
+        "type": "object",
+        "required": [
+          "fromId",
+          "toId"
+        ],
+        "title": "RecipeToolMerge"
+      },
       "RecipeToolOut": {
         "properties": {
           "name": {
@@ -29455,6 +31730,11 @@
           "slug": {
             "type": "string",
             "title": "Slug"
+          },
+          "recipeCount": {
+            "type": "integer",
+            "title": "Recipecount",
+            "default": 0
           }
         },
         "type": "object",
@@ -29551,6 +31831,11 @@
           "slug": {
             "type": "string",
             "title": "Slug"
+          },
+          "recipeCount": {
+            "type": "integer",
+            "title": "Recipecount",
+            "default": 0
           },
           "recipes": {
             "items": {
@@ -31704,6 +33989,47 @@
         ],
         "title": "TagOut"
       },
+      "ThemePresetCreate": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "colors": {
+            "$ref": "#/components/schemas/AppThemeUpdate"
+          }
+        },
+        "type": "object",
+        "required": [
+          "name",
+          "colors"
+        ],
+        "title": "ThemePresetCreate",
+        "description": "Saves a palette under a name; saving an existing name replaces that preset"
+      },
+      "ThemePresetOut": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "colors": {
+            "$ref": "#/components/schemas/AppThemeUpdate"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "colors"
+        ],
+        "title": "ThemePresetOut"
+      },
       "TimelineEventImage": {
         "type": "string",
         "enum": [
@@ -31892,6 +34218,16 @@
             "type": "boolean",
             "title": "Recipedisablecomments",
             "default": false
+          },
+          "defaultMeasurementSystem": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/MeasurementSystem"
+              },
+              {
+                "type": "null"
+              }
+            ]
           }
         },
         "type": "object",
@@ -31942,6 +34278,12 @@
               }
             ],
             "title": "Recipeid"
+          },
+          "recipeScale": {
+            "type": "number",
+            "exclusiveMinimum": 0.0,
+            "title": "Recipescale",
+            "default": 1.0
           },
           "id": {
             "type": "integer",
@@ -32776,105 +35118,6 @@
           "household": "Family",
           "username": "ChangeMe"
         }
-      },
-      "AIRequestLogEntry": {
-        "properties": {
-          "timestamp": {
-            "type": "string",
-            "format": "date-time",
-            "title": "Timestamp"
-          },
-          "requestType": {
-            "type": "string",
-            "title": "Requesttype"
-          },
-          "model": {
-            "type": "string",
-            "title": "Model"
-          },
-          "systemPrompt": {
-            "type": "string",
-            "title": "Systemprompt"
-          },
-          "userMessage": {
-            "type": "string",
-            "title": "Usermessage"
-          },
-          "rawResponse": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Rawresponse"
-          },
-          "error": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Error"
-          }
-        },
-        "type": "object",
-        "required": [
-          "timestamp",
-          "requestType",
-          "model",
-          "systemPrompt",
-          "userMessage"
-        ],
-        "title": "AIRequestLogEntry",
-        "description": "One request sent to an AI provider, with exactly what was sent and what came back, so a\ngroup manager can check which prompt actually reached the model and how it answered."
-      },
-      "AIPromptOverrideUpdate": {
-        "properties": {
-          "prompt": {
-            "type": "string",
-            "title": "Prompt"
-          }
-        },
-        "type": "object",
-        "required": [
-          "prompt"
-        ],
-        "title": "AIPromptOverrideUpdate"
-      },
-      "AIPromptOut": {
-        "properties": {
-          "name": {
-            "type": "string",
-            "title": "Name"
-          },
-          "content": {
-            "type": "string",
-            "title": "Content"
-          },
-          "defaultContent": {
-            "type": "string",
-            "title": "Defaultcontent"
-          },
-          "isOverridden": {
-            "type": "boolean",
-            "title": "Isoverridden"
-          }
-        },
-        "type": "object",
-        "required": [
-          "name",
-          "content",
-          "defaultContent",
-          "isOverridden"
-        ],
-        "title": "AIPromptOut",
-        "description": "A single AI prompt, identified by its dotted name (e.g. `recipes.parse-recipe-ingredients`).\n\n`content` is the prompt actually used (the override when one is set, otherwise\n`default_content`), while `default_content` is always the non-override baseline shipped with\nor configured for the server, so the editor can offer a \"reset to default\" action."
       }
     },
     "securitySchemes": {
