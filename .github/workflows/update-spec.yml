@@ -10,11 +10,16 @@ on:
         required: false
         default: ""
 
-# Auto-track the latest stable Mealie release. Each run pulls that image's real
-# version; when the spec changes, the run bumps the version and cuts a release.
-# Pin a specific version here (e.g. "v3.20.1") or via the dispatch input to
-# freeze on one release instead.
+# Auto-track the Mealie fork's published image (ghcr.io/mariusgassen/mealie,
+# rebuilt on every push to mealie-next), so fork-only endpoints (AI prompts,
+# request log, ...) stay in the spec. The image reports its version as "nightly",
+# so the Mealie version is read from the fork's pyproject.toml instead. When the
+# spec changes, the run bumps the version (or the revision, if the version is
+# unchanged) and cuts a release. Pin a tag here (e.g. "v3.20.1") or via the
+# dispatch input to freeze on one build instead.
 env:
+  MEALIE_IMAGE: "ghcr.io/mariusgassen/mealie"
+  MEALIE_VERSION_SOURCE: "https://raw.githubusercontent.com/mariusgassen/mealie/mealie-next/pyproject.toml"
   MEALIE_TAG_DEFAULT: "latest"
 
 permissions:
@@ -53,15 +58,19 @@ jobs:
         run: |
           docker run -d --name mealie -p 9925:9000 \
             -e ALLOW_SIGNUP=true -e BASE_URL=http://localhost:9925 -e TZ=UTC \
-            "ghcr.io/mealie-recipes/mealie:${MEALIE_TAG}"
+            "${MEALIE_IMAGE}:${MEALIE_TAG}"
           for i in $(seq 1 80); do
             code="$(curl -s -o /dev/null -w '%{http_code}' http://localhost:9925/api/app/about || true)"
             [ "$code" = "200" ] && break
             sleep 3
           done
-          VER="$(curl -fsS http://localhost:9925/api/app/about | python -c 'import sys,json;print(json.load(sys.stdin)["version"])')"
+          # The fork image reports "nightly" as its version, so use the fork's pyproject version.
+          VER="v$(curl -fsSL "$MEALIE_VERSION_SOURCE" | sed -n 's/^version = "\([^"]*\)".*/\1/p' | head -n1)"
+          if ! printf '%s' "$VER" | grep -Eq '^v[0-9]+\.[0-9]+\.[0-9]+$'; then
+            echo "::error::Could not read a Mealie version from $MEALIE_VERSION_SOURCE (got: $VER)"; exit 1
+          fi
           echo "MEALIE_VERSION=$VER" >> "$GITHUB_ENV"
-          echo "Mealie reports version: $VER"
+          echo "Mealie version: $VER"
 
       - name: Pull spec, canonicalize, regenerate tool reference
         run: |
@@ -80,7 +89,12 @@ jobs:
 
           DATE="$(date -u +%Y-%m-%d)"
           TOOLS="$(python -c "import json;from better_mealie_mcp.naming import build_names;print(len(build_names(json.load(open('openapi.json')))))")"
-          python scripts/set_version.py "$MEALIE_VERSION" "$DATE" "$TOOLS"
+          if [ "$MEALIE_VERSION" = "$(cat MEALIE_VERSION)" ]; then
+            # Same Mealie version, new spec: an MCP-only revision (v<ver>-r<n>).
+            echo "$(( $(tr -dc '0-9' < REVISION) + 1 ))" > REVISION
+          else
+            python scripts/set_version.py "$MEALIE_VERSION" "$DATE" "$TOOLS"
+          fi
           # set_version bumps pyproject's version; re-lock so `uv sync --locked`
           # (Docker build) keeps working.
           pip install uv && uv lock
