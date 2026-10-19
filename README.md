@@ -214,7 +214,7 @@ scripts/tools that can't run the connector flow).
 ```bash
 docker run -d --name mealie -p 9925:9000 \
   -e ALLOW_SIGNUP=true -e BASE_URL=http://localhost:9925 -e TZ=UTC \
-  ghcr.io/mealie-recipes/mealie:latest
+  ghcr.io/mariusgassen/mealie:latest
 ```
 
 Default admin login: `changeme@example.com` / `MyPassword`.
@@ -238,22 +238,26 @@ bumps and the release/image tag gains a `-r<n>` suffix — e.g. `v3.20.1-r2`
 (`-r1` is the base and carries no suffix). A new Mealie version resets the
 counter. `:latest` always points at the newest build.
 
-`openapi.json` is a vendored copy of Mealie's spec. The
+`openapi.json` is a vendored copy of the spec of the Mealie fork
+([`mariusgassen/mealie`](https://github.com/mariusgassen/mealie)), so fork-only
+endpoints such as the AI prompt overrides and request log are included. The
 [`update-spec`](.github/workflows/update-spec.yml) workflow runs daily and
-**auto-tracks the latest stable Mealie release** (`mealie:latest`): it boots that
-image, reads its real version from `/api/app/about`
-([`MEALIE_VERSION`](./MEALIE_VERSION)), pulls `/openapi.json`, regenerates
-[TOOLS.md](./TOOLS.md) + counts, and — **only when the spec actually changed** —
-bumps the version and **opens a pull request** (main is protected, so every
-change lands via PR). When that PR merges,
+**auto-tracks the fork's published image** (`ghcr.io/mariusgassen/mealie:latest`,
+rebuilt on every push to `mealie-next`): it boots that image, reads the Mealie
+version from the fork's `pyproject.toml` (the image itself only reports
+`nightly`) into [`MEALIE_VERSION`](./MEALIE_VERSION), pulls `/openapi.json`,
+regenerates [TOOLS.md](./TOOLS.md) + counts, and — **only when the spec actually
+changed** — bumps the version (or, if the Mealie version is unchanged, the
+[`REVISION`](./REVISION)) and **opens a pull request** (main is protected, so
+every change lands via PR). When that PR merges,
 [`release-on-spec`](.github/workflows/release-on-spec.yml) cuts a
 [release](https://github.com/djwmarcx/better-mealie-mcp/releases) (spec attached,
 notes listing added/removed tools). Volatile server-clock defaults are stripped
 so an unchanged run is a true no-op.
 
-To freeze on one release instead of tracking latest, set `MEALIE_TAG_DEFAULT` in
-the workflow to a specific tag (e.g. `v3.20.1`), or run it manually with a
-`mealie_tag` input (`latest`, `nightly`, or any tag).
+To freeze on one build instead of tracking latest, set `MEALIE_TAG_DEFAULT` in
+the workflow to a specific tag, or run it manually with a `mealie_tag` input
+(`latest`, `nightly`, or any tag the fork publishes).
 - A few endpoints (`list_auth_oauth*`) return 500 unless OIDC is configured on
   the Mealie side — that's Mealie behavior, not the server.
 

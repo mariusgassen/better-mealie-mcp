@@ -1006,7 +1006,7 @@
   }
 
   function renderDocker() {
-    const code = `docker run -d --name mealie -p 9925:9000 \\\n  -e ALLOW_SIGNUP=true -e BASE_URL=http://localhost:9925 -e TZ=UTC \\\n  ghcr.io/mealie-recipes/mealie:latest`;
+    const code = `docker run -d --name mealie -p 9925:9000 \\\n  -e ALLOW_SIGNUP=true -e BASE_URL=http://localhost:9925 -e TZ=UTC \\\n  ghcr.io/mariusgassen/mealie:latest`;
     $("#dockerCode").innerHTML = hlShell(code);
     const btn = document.querySelector('[data-copy="docker"]');
     if (btn && !btn._bound) { btn._bound = true; btn.addEventListener("click", () => copyText(code, btn)); }
