@@ -21,7 +21,10 @@ RUN --mount=type=cache,target=/root/.cache/uv \
     uv sync --locked --no-dev --no-editable
 
 # --- Runtime stage ---
-FROM python:3.15-slim
+# Keep this on the same Python minor as the builder stage: the venv is built there and
+# copied over, so a different interpreter here cannot run it. Bump both together, once
+# an astral-sh/uv:python<minor>-bookworm-slim image exists for the new version.
+FROM python:3.14-slim
 
 LABEL org.opencontainers.image.title="Better Mealie MCP" \
       org.opencontainers.image.description="MCP server exposing every Mealie API endpoint via FastMCP" \
