@@ -35,6 +35,7 @@ Run:
 
 from __future__ import annotations
 
+import base64
 import json
 import os
 import re
@@ -120,6 +121,37 @@ MEALIE_VERSION = (
 )
 
 
+# Content types a tool can hand back as text; everything else (recipe images, exports, ...) is
+# binary and would fail to decode as UTF-8.
+_TEXTUAL = ("text/", "json", "xml", "javascript", "x-www-form-urlencoded")
+
+
+class _BinaryAsJSON(httpx.AsyncBaseTransport):
+    """Hands binary responses to the tools as JSON: {"contentType": ..., "base64": ...}.
+
+    Tools decode every response as JSON or text, so an image endpoint such as
+    /api/media/recipes/{id}/images/{file} otherwise fails with a UnicodeDecodeError.
+    """
+
+    def __init__(self, inner: httpx.AsyncBaseTransport) -> None:
+        self._inner = inner
+
+    async def handle_async_request(self, request: httpx.Request) -> httpx.Response:
+        response = await self._inner.handle_async_request(request)
+        content_type = response.headers.get("content-type", "").split(";")[0].strip().lower()
+        if not (200 <= response.status_code < 300) or not content_type or any(t in content_type for t in _TEXTUAL):
+            return response
+        body = await response.aread()
+        await response.aclose()
+        payload = json.dumps({"contentType": content_type, "base64": base64.b64encode(body).decode("ascii")})
+        headers = {k: v for k, v in response.headers.items() if k.lower() not in ("content-type", "content-length", "content-encoding")}
+        headers["content-type"] = "application/json"
+        return httpx.Response(response.status_code, headers=headers, content=payload.encode(), request=request)
+
+    async def aclose(self) -> None:
+        await self._inner.aclose()
+
+
 def _get_token() -> str:
     """Return a bearer token: use API token if given, else login."""
     if API_TOKEN:
@@ -151,7 +183,7 @@ def build_server() -> FastMCP:
         base_url=BASE_URL,
         headers={"Authorization": f"Bearer {token}"},
         timeout=TIMEOUT,
-        verify=VERIFY_SSL,
+        transport=_BinaryAsJSON(httpx.AsyncHTTPTransport(verify=VERIFY_SSL)),
     )
 
     return FastMCP.from_openapi(
