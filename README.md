@@ -3,10 +3,10 @@
 # 🍲 Better Mealie MCP
 
 <p>
-  <img src="https://img.shields.io/badge/tools-296-blue" alt="296 tools">
+  <img src="https://img.shields.io/badge/tools-294-blue" alt="294 tools">
   <a href="https://github.com/jlowin/fastmcp"><img src="https://img.shields.io/badge/Built%20with-FastMCP-purple" alt="Built with FastMCP"></a>
   <img src="https://img.shields.io/badge/python-3.14%2B-blue" alt="Python 3.14+">
-  <img src="https://img.shields.io/badge/Mealie-v3.28.0-brightgreen" alt="Mealie v3.28.0">
+  <img src="https://img.shields.io/badge/Mealie-v3.30.0-brightgreen" alt="Mealie v3.30.0">
 </p>
 <p>
   <a href="https://github.com/djwmarcx/better-mealie-mcp/actions/workflows/update-spec.yml"><img src="https://img.shields.io/github/actions/workflow/status/djwmarcx/better-mealie-mcp/update-spec.yml?label=spec%20sync" alt="Spec sync"></a>
