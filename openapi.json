@@ -6119,6 +6119,56 @@
             }
           },
           {
+            "name": "lang",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Lang"
+            }
+          },
+          {
+            "name": "duration",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 1440,
+              "minimum": 1,
+              "default": 60,
+              "title": "Duration"
+            }
+          },
+          {
+            "name": "summary",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "maxLength": 500,
+              "default": "${type}: ${title}",
+              "title": "Summary"
+            }
+          },
+          {
+            "name": "description",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "maxLength": 500,
+              "default": "${note}\n\n${url}",
+              "title": "Description"
+            }
+          },
+          {
             "name": "breakfast",
             "in": "query",
             "required": false,
@@ -6317,6 +6367,16 @@
                 }
               ],
               "title": "End Date"
+            }
+          },
+          {
+            "name": "include_week_entries",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": false,
+              "title": "Include Week Entries"
             }
           },
           {
@@ -7403,11 +7463,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/AIPromptOut"
-                  },
-                  "title": "Response Get Ai Prompts Api Groups Ai Providers Prompts Get"
+                  "$ref": "#/components/schemas/AIPromptsOut"
                 }
               }
             }
@@ -7425,76 +7481,15 @@
         }
       }
     },
-    "/api/groups/ai-providers/prompts/{name}": {
-      "get": {
-        "tags": [
-          "Groups: AI Prompts",
-          "Groups: AI Prompts"
-        ],
-        "summary": "Get Ai Prompt",
-        "operationId": "get_ai_prompt_api_groups_ai_providers_prompts__name__get",
-        "security": [
-          {
-            "OAuth2PasswordBearer": []
-          }
-        ],
-        "parameters": [
-          {
-            "name": "name",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "title": "Name"
-            }
-          },
-          {
-            "name": "accept-language",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "Accept-Language"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/AIPromptOut"
-                }
-              }
-            }
-          },
-          "422": {
-            "description": "Validation Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            }
-          }
-        }
-      },
+    "/api/groups/ai-providers/prompts/{prompt_name}": {
       "put": {
         "tags": [
           "Groups: AI Prompts",
           "Groups: AI Prompts"
         ],
         "summary": "Update Ai Prompt",
-        "operationId": "update_ai_prompt_api_groups_ai_providers_prompts__name__put",
+        "description": "Append to or override a prompt. The group-wide instructions (`global`) can only be appended.",
+        "operationId": "update_ai_prompt_api_groups_ai_providers_prompts__prompt_name__put",
         "security": [
           {
             "OAuth2PasswordBearer": []
@@ -7502,12 +7497,12 @@
         ],
         "parameters": [
           {
-            "name": "name",
+            "name": "prompt_name",
             "in": "path",
             "required": true,
             "schema": {
               "type": "string",
-              "title": "Name"
+              "title": "Prompt Name"
             }
           },
           {
@@ -7543,7 +7538,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AIPromptOut"
+                  "$ref": "#/components/schemas/AIPromptsOut"
                 }
               }
             }
@@ -7565,9 +7560,9 @@
           "Groups: AI Prompts",
           "Groups: AI Prompts"
         ],
-        "summary": "Reset Ai Prompt",
-        "description": "Discards the group's override for this prompt, reverting it to the default.",
-        "operationId": "reset_ai_prompt_api_groups_ai_providers_prompts__name__delete",
+        "summary": "Delete Ai Prompt",
+        "description": "Reset a prompt to the default",
+        "operationId": "delete_ai_prompt_api_groups_ai_providers_prompts__prompt_name__delete",
         "security": [
           {
             "OAuth2PasswordBearer": []
@@ -7575,12 +7570,12 @@
         ],
         "parameters": [
           {
-            "name": "name",
+            "name": "prompt_name",
             "in": "path",
             "required": true,
             "schema": {
               "type": "string",
-              "title": "Name"
+              "title": "Prompt Name"
             }
           },
           {
@@ -7606,7 +7601,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AIPromptOut"
+                  "$ref": "#/components/schemas/AIPromptsOut"
                 }
               }
             }
@@ -9531,7 +9526,7 @@
           "Recipe: CRUD"
         ],
         "summary": "Create Recipe From Html Or Json",
-        "description": "Takes in raw HTML or a https://schema.org/Recipe object as a JSON string and parses it like a URL",
+        "description": "Takes in raw HTML or a https://schema.org/Recipe object as a JSON string and parses it like a URL.\n\nA complete recipe exported from Mealie (the JSON from an export zip, or the recipe as\nreturned by the API) is imported with its full structure instead of being parsed as\nschema.org.",
         "operationId": "create_recipe_from_html_or_json_api_recipes_create_html_or_json_post",
         "security": [
           {
@@ -9597,7 +9592,7 @@
           "Recipe: CRUD"
         ],
         "summary": "Create Recipe From Html Or Json Stream",
-        "description": "Takes in raw HTML or a https://schema.org/Recipe object as a JSON string and parses it like a URL,\nstreaming progress via SSE",
+        "description": "Takes in raw HTML or a https://schema.org/Recipe object as a JSON string and parses it like a URL,\nstreaming progress via SSE.\n\nA complete recipe exported from Mealie (the JSON from an export zip, or the recipe as\nreturned by the API) is imported with its full structure instead of being parsed as\nschema.org.",
         "operationId": "create_recipe_from_html_or_json_stream_api_recipes_create_html_or_json_stream_post",
         "security": [
           {
@@ -18310,11 +18305,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/AIPromptOut"
-                  },
-                  "title": "Response Get Ai Prompts Api Admin Groups  Group Id  Ai Providers Prompts Get"
+                  "$ref": "#/components/schemas/AIPromptsOut"
                 }
               }
             }
@@ -18332,84 +18323,14 @@
         }
       }
     },
-    "/api/admin/groups/{group_id}/ai-providers/prompts/{name}": {
-      "get": {
-        "tags": [
-          "Admin: AI Prompts"
-        ],
-        "summary": "Get Ai Prompt",
-        "operationId": "get_ai_prompt_api_admin_groups__group_id__ai_providers_prompts__name__get",
-        "security": [
-          {
-            "OAuth2PasswordBearer": []
-          }
-        ],
-        "parameters": [
-          {
-            "name": "group_id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid",
-              "title": "Group Id"
-            }
-          },
-          {
-            "name": "name",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "title": "Name"
-            }
-          },
-          {
-            "name": "accept-language",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "Accept-Language"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/AIPromptOut"
-                }
-              }
-            }
-          },
-          "422": {
-            "description": "Validation Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            }
-          }
-        }
-      },
+    "/api/admin/groups/{group_id}/ai-providers/prompts/{prompt_name}": {
       "put": {
         "tags": [
           "Admin: AI Prompts"
         ],
         "summary": "Update Ai Prompt",
-        "operationId": "update_ai_prompt_api_admin_groups__group_id__ai_providers_prompts__name__put",
+        "description": "Append to or override a prompt. The group-wide instructions (`global`) can only be appended.",
+        "operationId": "update_ai_prompt_api_admin_groups__group_id__ai_providers_prompts__prompt_name__put",
         "security": [
           {
             "OAuth2PasswordBearer": []
@@ -18427,12 +18348,12 @@
             }
           },
           {
-            "name": "name",
+            "name": "prompt_name",
             "in": "path",
             "required": true,
             "schema": {
               "type": "string",
-              "title": "Name"
+              "title": "Prompt Name"
             }
           },
           {
@@ -18468,7 +18389,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AIPromptOut"
+                  "$ref": "#/components/schemas/AIPromptsOut"
                 }
               }
             }
@@ -18489,9 +18410,9 @@
         "tags": [
           "Admin: AI Prompts"
         ],
-        "summary": "Reset Ai Prompt",
-        "description": "Discards the group's override for this prompt, reverting it to the default.",
-        "operationId": "reset_ai_prompt_api_admin_groups__group_id__ai_providers_prompts__name__delete",
+        "summary": "Delete Ai Prompt",
+        "description": "Reset a prompt to the default",
+        "operationId": "delete_ai_prompt_api_admin_groups__group_id__ai_providers_prompts__prompt_name__delete",
         "security": [
           {
             "OAuth2PasswordBearer": []
@@ -18509,12 +18430,12 @@
             }
           },
           {
-            "name": "name",
+            "name": "prompt_name",
             "in": "path",
             "required": true,
             "schema": {
               "type": "string",
-              "title": "Name"
+              "title": "Prompt Name"
             }
           },
           {
@@ -18540,7 +18461,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AIPromptOut"
+                  "$ref": "#/components/schemas/AIPromptsOut"
                 }
               }
             }
@@ -22187,47 +22108,107 @@
   },
   "components": {
     "schemas": {
+      "AIPromptMode": {
+        "type": "string",
+        "enum": [
+          "append",
+          "override"
+        ],
+        "title": "AIPromptMode"
+      },
       "AIPromptOut": {
         "properties": {
           "name": {
             "type": "string",
             "title": "Name"
           },
-          "content": {
-            "type": "string",
-            "title": "Content"
+          "isSystem": {
+            "type": "boolean",
+            "title": "Issystem"
           },
           "defaultContent": {
             "type": "string",
             "title": "Defaultcontent"
           },
-          "isOverridden": {
+          "mode": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/AIPromptMode"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "content": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Content"
+          },
+          "defaultChanged": {
             "type": "boolean",
-            "title": "Isoverridden"
+            "title": "Defaultchanged",
+            "default": false
           }
         },
         "type": "object",
         "required": [
           "name",
-          "content",
-          "defaultContent",
-          "isOverridden"
+          "isSystem",
+          "defaultContent"
         ],
-        "title": "AIPromptOut",
-        "description": "A single AI prompt, identified by its dotted name (e.g. `recipes.parse-recipe-ingredients`).\n\n`content` is the prompt actually used (the override when one is set, otherwise\n`default_content`), while `default_content` is always the non-override baseline shipped with\nor configured for the server, so the editor can offer a \"reset to default\" action."
+        "title": "AIPromptOut"
       },
       "AIPromptOverrideUpdate": {
         "properties": {
-          "prompt": {
+          "mode": {
+            "$ref": "#/components/schemas/AIPromptMode"
+          },
+          "content": {
             "type": "string",
-            "title": "Prompt"
+            "maxLength": 20000,
+            "title": "Content"
           }
         },
         "type": "object",
         "required": [
-          "prompt"
+          "mode",
+          "content"
         ],
         "title": "AIPromptOverrideUpdate"
+      },
+      "AIPromptsOut": {
+        "properties": {
+          "globalInstructions": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Globalinstructions"
+          },
+          "prompts": {
+            "items": {
+              "$ref": "#/components/schemas/AIPromptOut"
+            },
+            "type": "array",
+            "title": "Prompts"
+          }
+        },
+        "type": "object",
+        "required": [
+          "prompts"
+        ],
+        "title": "AIPromptsOut"
       },
       "AIProviderCreate": {
         "properties": {
@@ -24341,6 +24322,18 @@
             "format": "date",
             "title": "Date"
           },
+          "endDate": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Enddate"
+          },
           "entryType": {
             "$ref": "#/components/schemas/PlanEntryType",
             "default": "breakfast"
@@ -24386,6 +24379,18 @@
             "type": "string",
             "format": "date",
             "title": "Date"
+          },
+          "endDate": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Enddate"
           },
           "entryType": {
             "$ref": "#/components/schemas/PlanEntryType",
@@ -28154,7 +28159,8 @@
           "sunday",
           "unset"
         ],
-        "title": "PlanRulesDay"
+        "title": "PlanRulesDay",
+        "description": "The day a meal plan rule applies to, or the weekday of the meal plan entry rules are looked up for.\n\nOn a rule, `unset` means the rule applies to all days. When looking up rules for an entry, `unset`\nmeans the entry isn't on a specific weekday (e.g. it spans a week), so only rules that apply to all\ndays match it."
       },
       "PlanRulesOut": {
         "properties": {
@@ -28600,6 +28606,18 @@
             "format": "date",
             "title": "Date"
           },
+          "endDate": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Enddate"
+          },
           "entryType": {
             "$ref": "#/components/schemas/PlanEntryType",
             "default": "breakfast"
@@ -28660,6 +28678,18 @@
                 "type": "null"
               }
             ]
+          },
+          "updatedAt": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Updatedat"
           }
         },
         "type": "object",
@@ -30749,6 +30779,19 @@
             "type": "array",
             "title": "Notereferences",
             "default": []
+          },
+          "durationSeconds": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 2147483647.0,
+                "minimum": 1.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Durationseconds"
           }
         },
         "type": "object",
@@ -34252,6 +34295,18 @@
             "type": "string",
             "format": "date",
             "title": "Date"
+          },
+          "endDate": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Enddate"
           },
           "entryType": {
             "$ref": "#/components/schemas/PlanEntryType",
